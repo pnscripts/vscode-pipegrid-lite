@@ -9,7 +9,7 @@
     "email": "office@pnscripts.com",
     "url": "https://pnscripts.com"
   },
-  "homepage": "https://pnscripts.com/marketplace/pipegrid",
+  "homepage": "https://pnscripts.com/marketplace/vscode-pipegrid",
   "repository": {
     "type": "git",
     "url": "https://github.com/pnscripts/pipegrid-lite"

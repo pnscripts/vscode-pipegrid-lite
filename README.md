@@ -31,7 +31,7 @@ a Markdown file when it is saved.
 Lite is complete for formatting and never asks for payment. The full edition,
 Pipegrid, adds Tab navigation between cells, CSV/TSV conversion, sorting,
 row and column editing, alignment and transposing:
-https://pnscripts.com/marketplace/pipegrid.
+https://pnscripts.com/marketplace/vscode-pipegrid.
 
 ## Develop
 
