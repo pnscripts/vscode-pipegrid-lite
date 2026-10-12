@@ -1,0 +1,7 @@
+test/**
+tools/**
+listing/**
+build/**
+dist/**
+.gitignore
+Makefile

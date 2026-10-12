@@ -1,0 +1,102 @@
+{
+  "name": "pipegrid-lite",
+  "displayName": "Pipegrid Lite by PN Scripts",
+  "description": "Align Markdown tables with correct widths for CJK text and emoji: format the table under the cursor, every table in a file or on save, and create new tables.",
+  "version": "1.0.0",
+  "publisher": "pnscripts",
+  "author": {
+    "name": "PN Scripts",
+    "email": "office@pnscripts.com",
+    "url": "https://pnscripts.com"
+  },
+  "homepage": "https://pnscripts.com/marketplace/pipegrid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pnscripts/pipegrid-lite"
+  },
+  "bugs": {
+    "url": "https://github.com/pnscripts/pipegrid-lite/issues"
+  },
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#14211b",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Formatters",
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "table",
+    "format",
+    "align",
+    "cjk",
+    "emoji"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "pipegridLite.formatTable",
+        "title": "Format Table",
+        "category": "Pipegrid Lite"
+      },
+      {
+        "command": "pipegridLite.formatAllTables",
+        "title": "Format All Tables in Document",
+        "category": "Pipegrid Lite"
+      },
+      {
+        "command": "pipegridLite.createTable",
+        "title": "Create Table...",
+        "category": "Pipegrid Lite"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "pipegridLite.formatTable",
+          "when": "editorLangId == markdown"
+        },
+        {
+          "command": "pipegridLite.formatAllTables",
+          "when": "editorLangId == markdown"
+        },
+        {
+          "command": "pipegridLite.createTable",
+          "when": "editorLangId == markdown"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "pipegridLite.formatTable",
+          "when": "editorLangId == markdown",
+          "group": "1_modification@90"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Pipegrid Lite",
+      "properties": {
+        "pipegridLite.formatOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Format every Markdown table in a file when it is saved."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "package": "node tools/package.js",
+    "images": "node tools/render.mjs tools/images.mjs"
+  }
+}
