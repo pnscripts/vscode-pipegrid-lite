@@ -12,10 +12,10 @@
   "homepage": "https://pnscripts.com/marketplace/vscode-pipegrid",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pnscripts/pipegrid-lite"
+    "url": "https://github.com/pnscripts/vscode-pipegrid-lite"
   },
   "bugs": {
-    "url": "https://github.com/pnscripts/pipegrid-lite/issues"
+    "url": "https://github.com/pnscripts/vscode-pipegrid-lite/issues"
   },
   "license": "MIT",
   "icon": "images/icon.png",
