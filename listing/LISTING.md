@@ -8,7 +8,7 @@ Nothing has been submitted. Build with `npm run package`; the same `dist/pipegri
 2. Upload `dist/pipegrid-lite-1.0.0.vsix` with "New extension > Visual Studio Code" (web upload needs no token). For CLI publishing later: Microsoft Entra ID / workload identity federation, because global Azure DevOps PATs retire on 2026-12-01.
 3. Optional: verify the domain pnscripts.com for the publisher (blue check).
 
-Listing text comes from package.json and README.md. Icon `images/icon.png` 256×256 PNG; README images are https PNG (raw.githubusercontent.com), so the public GitHub repo `pnscripts/pipegrid-lite` must exist before publishing.
+Listing text comes from package.json and README.md. Icon `images/icon.png` 256×256 PNG; README images are https PNG (raw.githubusercontent.com), so the public GitHub repo `pnscripts/vscode-pipegrid-lite` must exist before publishing.
 
 ## Open VSX: free, ready
 

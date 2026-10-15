@@ -4,7 +4,7 @@ A free Visual Studio Code extension that aligns Markdown tables. Widths are
 measured in display columns, so Chinese, Japanese and Korean text, fullwidth
 forms and emoji do not throw the pipes off.
 
-![A Markdown table with Japanese text and emoji before and after Format Table](https://raw.githubusercontent.com/pnscripts/pipegrid-lite/main/listing/screenshot-format-table-1280x800.png)
+![A Markdown table with Japanese text and emoji before and after Format Table](https://raw.githubusercontent.com/pnscripts/vscode-pipegrid-lite/main/listing/screenshot-format-table-1280x800.png)
 
 ## Commands
 
