@@ -79,6 +79,20 @@ function findAllTables(lines) {
   return found;
 }
 
+/** Whether line n is inside a fenced code block (``` or ~~~), fence lines included. */
+function inFencedBlock(lines, n) {
+  let inFence = null;
+  for (let i = 0; i <= n && i < lines.length; i++) {
+    const fence = /^\s*(`{3,}|~{3,})/.exec(lines[i]);
+    if (fence) {
+      if (i === n) return true;
+      if (!inFence) inFence = fence[1][0];
+      else if (fence[1][0] === inFence) inFence = null;
+    }
+  }
+  return inFence !== null;
+}
+
 /** Parse table lines (header, delimiter, body...). */
 function parseTable(lines) {
   if (lines.length < 2 || !isDelimiterRow(lines[1])) throw new Error('not a Markdown table: the second line must be a delimiter row such as | --- | --- |');
@@ -369,6 +383,30 @@ function csvToMarkdown(text, options) {
   return { lines: formatTable(table), delimiter, rowCount: rows.length - 1, columnCount: width };
 }
 
+/**
+ * Whether pasted text looks like rows copied from a spreadsheet or a CSV file: at least two
+ * non-empty lines and two columns, every row with the same number of cells. Returns the
+ * delimiter, or null for ordinary text (a sentence with commas must not become a table).
+ */
+function looksTabular(text) {
+  if (typeof text !== 'string' || text.length > 2000000) return null;
+  const t = text.replace(/^\u{feff}/u, '').replace(/(\r?\n)+$/, '');
+  if (!/\r?\n/.test(t)) return null;
+  const d = detectDelimiter(t);
+  let rows;
+  try { rows = parseDelimited(t, d).rows; } catch (e) { return null; }
+  if (rows.length < 2) return null;
+  const width = rows[0].length;
+  if (width < 2 || rows.some((r) => r.length !== width)) return null;
+  if (d !== '\t') {
+    if (rows.some((r) => r.some((c) => c.length > 200))) return null;
+    // Prose ("Hello, world.") puts a space after the comma; exported CSV does not.
+    const later = rows.flatMap((r) => r.slice(1));
+    if (later.filter((c) => /^ \S/.test(c)).length * 2 > later.length) return null;
+  }
+  return d;
+}
+
 function fromCellText(cell) {
   return cell.replace(/\\\|/g, '|').replace(/<br\s*\/?>/gi, '\n');
 }
@@ -390,5 +428,5 @@ module.exports = {
   formatTable, formatText, formatDocument, columnAt, cellOffset,
   insertColumn, deleteColumn, moveColumn, alignColumn, sortByColumn, transpose,
   insertRow, deleteRow, moveRow, createTable, parseSizeSpec, cellRange,
-  detectDelimiter, parseDelimited, csvToMarkdown, tableToDelimited, toNumber, stringWidth
+  detectDelimiter, parseDelimited, csvToMarkdown, looksTabular, inFencedBlock, tableToDelimited, toNumber, stringWidth
 };

@@ -1,5 +1,5 @@
 /*
- * Pipegrid Lite for VS Code: format and create Markdown tables.
+ * Pipegrid Lite for VS Code: format, create and paste Markdown tables.
  * All table logic lives in table.js; this file only talks to the editor.
  * Copyright (c) 2026 ПН СКРИПТС ЕООД / PN Scripts. MIT licence.
  */
@@ -88,6 +88,50 @@ async function createTable(editor) {
   editor.selection = new vscode.Selection(firstLine, a, firstLine, b);
 }
 
+const plural = (n, word) => n + ' ' + word + (n === 1 ? '' : 's');
+
+/** Text that inserts a table at a position, as its own paragraph when the line has other text. */
+function tableInsertion(doc, pos, lines) {
+  const eol = eolOf(doc);
+  const lineText = doc.lineAt(pos.line).text;
+  const before = lineText.slice(0, pos.character);
+  const after = lineText.slice(pos.character);
+  const indent = /^ */.exec(lineText)[0];
+  const prefix = before.trim() ? eol + eol + indent : '';
+  const body = lines.map((l, i) => (i === 0 && !prefix ? l.slice(Math.min(indent.length, pos.character)) : l)).join(eol);
+  const suffix = after.trim() ? eol + eol : '';
+  return prefix + body + suffix;
+}
+
+/**
+ * Pasting cells copied from a spreadsheet (tab-separated rows) inserts a Markdown table
+ * (VS Code 1.97 and newer); the paste widget next to the result switches back to plain text.
+ */
+function registerPasteProvider(context) {
+  const languages = vscode.languages;
+  const Kind = vscode.DocumentDropOrPasteEditKind;
+  if (!languages || typeof languages.registerDocumentPasteEditProvider !== 'function' || !Kind || !vscode.DocumentPasteEdit) return null;
+  const kind = Kind.Empty.append('markdown', 'table', 'pipegridLite');
+  const provider = {
+    async provideDocumentPasteEdits(document, ranges, dataTransfer, ctx, token) {
+      if (!vscode.workspace.getConfiguration('pipegridLite', document.uri).get('pasteSpreadsheetAsTable', true)) return undefined;
+      const item = dataTransfer.get('text/plain');
+      if (!item) return undefined;
+      const text = await item.asString();
+      if ((token && token.isCancellationRequested) || T.looksTabular(text) !== '\t') return undefined;
+      const range = ranges[0];
+      if (T.inFencedBlock(docLines(document).slice(0, range.start.line + 1), range.start.line)) return undefined;
+      const indent = /^ */.exec(document.lineAt(range.start.line).text)[0];
+      let res;
+      try { res = T.csvToMarkdown(text, { delimiter: '\t', indent }); } catch (e) { return undefined; }
+      const insert = range.isEmpty ? tableInsertion(document, range.start, res.lines) : res.lines.join(eolOf(document));
+      return [new vscode.DocumentPasteEdit(insert, `Insert Markdown table (${plural(res.rowCount, 'row')} x ${plural(res.columnCount, 'column')})`, kind)];
+    }
+  };
+  context.subscriptions.push(languages.registerDocumentPasteEditProvider({ language: 'markdown' }, provider, { providedPasteEditKinds: [kind], pasteMimeTypes: ['text/plain'] }));
+  return provider;
+}
+
 const COMMANDS = {
   'pipegridLite.formatTable': formatTable,
   'pipegridLite.formatAllTables': formatAll,
@@ -102,6 +146,7 @@ function activate(context) {
       return fn(editor);
     }));
   }
+  registerPasteProvider(context);
   context.subscriptions.push(vscode.workspace.onWillSaveTextDocument((e) => {
     if (e.document.languageId !== 'markdown') return;
     if (!vscode.workspace.getConfiguration('pipegridLite', e.document.uri).get('formatOnSave', false)) return;

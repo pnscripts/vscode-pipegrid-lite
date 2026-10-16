@@ -1,8 +1,9 @@
 # Pipegrid Lite by PN Scripts
 
-A free Visual Studio Code extension that aligns Markdown tables. Widths are
-measured in display columns, so Chinese, Japanese and Korean text, fullwidth
-forms and emoji do not throw the pipes off.
+A free Visual Studio Code extension that aligns Markdown tables and turns
+cells pasted from a spreadsheet into a table. Widths are measured in display
+columns, so Chinese, Japanese and Korean text, fullwidth forms and emoji do
+not throw the pipes off.
 
 ![A Markdown table with Japanese text and emoji before and after Format Table](https://raw.githubusercontent.com/pnscripts/vscode-pipegrid-lite/main/listing/screenshot-format-table-1280x800.png)
 
@@ -14,8 +15,18 @@ forms and emoji do not throw the pipes off.
 | Format All Tables in Document                       | Aligns every table in the file; fenced code blocks are skipped.  |
 | Create Table...                                     | Asks for a size such as 3x4 and inserts an empty, aligned table. |
 
-Setting: `pipegridLite.formatOnSave` (off by default) formats every table in
-a Markdown file when it is saved.
+**Paste from a spreadsheet.** Copy cells in Excel, Google Sheets or
+LibreOffice Calc and press `Ctrl+V` in a Markdown file: on VS Code 1.97 and
+newer they arrive as an aligned table (first row = header). The paste options
+button VS Code shows next to the result (or `Ctrl+.`) switches back to plain
+text. Inside fenced code blocks, for single lines and for comma-separated text
+the paste stays plain.
+
+![Spreadsheet cells pasted into a Markdown file as a table, with VS Code's paste options](https://raw.githubusercontent.com/pnscripts/vscode-pipegrid-lite/main/listing/screenshot-paste-from-spreadsheet-1280x800.png)
+
+Settings: `pipegridLite.formatOnSave` (off by default) formats every table in
+a Markdown file when it is saved; `pipegridLite.pasteSpreadsheetAsTable` (on by
+default) turns the table paste off when set to `false`.
 
 ## How tables are read and written
 
@@ -29,7 +40,8 @@ a Markdown file when it is saved.
   cells, indentation (for example inside a list) is kept, CRLF stays CRLF.
 
 Lite is complete for formatting and never asks for payment. The full edition,
-Pipegrid, adds Tab navigation between cells, CSV/TSV conversion, sorting,
+Pipegrid, adds Tab navigation between cells, Paste as Table for CSV text and
+older VS Code versions, CSV/TSV conversion, sorting,
 row and column editing, alignment and transposing:
 https://pnscripts.com/marketplace/vscode-pipegrid.
 
@@ -37,7 +49,7 @@ https://pnscripts.com/marketplace/vscode-pipegrid.
 
 ```
 npm test           # table engine and extension tests against a fake VS Code API
-npm run package    # dist/pipegrid-lite-1.0.0.vsix (uses @vscode/vsce)
+npm run package    # dist/pipegrid-lite-1.1.0.vsix (uses @vscode/vsce)
 npm run images     # icon and listing images at exact sizes
 ```
 

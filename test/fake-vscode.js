@@ -64,7 +64,16 @@ function create() {
       registerCommand: (id, fn) => { state.commands[id] = fn; return { dispose() {} }; },
       executeCommand: async (id, key, value) => { if (id === 'setContext') state.context[key] = value; }
     },
-    env: { clipboard: { writeText: async (t) => { state.clipboard = t; } } }
+    env: { clipboard: { writeText: async (t) => { state.clipboard = t; }, readText: async () => state.clipboard } },
+    languages: {
+      registerDocumentPasteEditProvider: (selector, provider, metadata) => { state.paste = { selector, provider, metadata }; return { dispose() {} }; }
+    },
+    DocumentDropOrPasteEditKind: (() => {
+      class Kind { constructor(value) { this.value = value; } append(...parts) { return new Kind([this.value].concat(parts).filter(Boolean).join('.')); } }
+      Kind.Empty = new Kind('');
+      return Kind;
+    })(),
+    DocumentPasteEdit: class { constructor(insertText, title, kind) { this.insertText = insertText; this.title = title; this.kind = kind; } }
   };
   return { api, state, FakeEditor, FakeDocument };
 }

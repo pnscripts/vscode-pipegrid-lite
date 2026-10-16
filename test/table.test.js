@@ -269,3 +269,24 @@ test('row operations, createTable, size spec and cellRange', () => {
   assert.equal(line.slice(...T.cellRange(line, 1)), 'de \\| f');
   assert.deepEqual(T.cellRange(line, 2), [18, 18]);
 });
+
+test('looksTabular: spreadsheet and CSV rows yes, prose and single lines no', () => {
+  assert.equal(T.looksTabular('a\tb\n1\t2\n'), '\t');
+  assert.equal(T.looksTabular('a\tb\r\n1\t2\r\n3\t\r\n'), '\t');
+  assert.equal(T.looksTabular('city;people\nSofia;"1 300 000"'), ';');
+  assert.equal(T.looksTabular('a,b,c\n1,"x, y",3'), ',');
+  assert.equal(T.looksTabular('a\tb'), null, 'one line');
+  assert.equal(T.looksTabular('Hello, world.\nNo commas here'), null, 'rows of different width');
+  assert.equal(T.looksTabular('single\ncolumn'), null);
+  assert.equal(T.looksTabular('a\tb\n1\t2\t3'), null, 'ragged rows');
+  assert.equal(T.looksTabular('x,' + 'y'.repeat(300) + '\n1,2'), null, 'a long sentence with one comma is not CSV');
+  assert.equal(T.looksTabular('Yes, please.\nNo, thanks.\nMaybe, later.'), null, 'prose: space after the comma');
+  assert.equal(T.looksTabular('name, age\nAna, 31'), null, 'spaced CSV is ambiguous with prose; Paste as Table still converts it');
+  assert.equal(T.looksTabular(''), null);
+  assert.equal(T.looksTabular(null), null);
+});
+
+test('inFencedBlock', () => {
+  const lines = ['text', '```js', 'a\tb', '```', 'after', '~~~', 'x', '~~~'];
+  assert.deepEqual(lines.map((l, i) => T.inFencedBlock(lines, i)), [false, true, true, true, false, true, true, true]);
+});

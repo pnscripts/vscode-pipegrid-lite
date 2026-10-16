@@ -1,8 +1,8 @@
 {
   "name": "pipegrid-lite",
   "displayName": "Pipegrid Lite by PN Scripts",
-  "description": "Align Markdown tables with correct widths for CJK text and emoji: format the table under the cursor, every table in a file or on save, and create new tables.",
-  "version": "1.0.0",
+  "description": "Align Markdown tables with correct widths for CJK text and emoji, paste cells from Excel or Google Sheets as a table, format every table in a file or on save, and create new tables.",
+  "version": "1.1.0",
   "publisher": "pnscripts",
   "author": {
     "name": "PN Scripts",
@@ -36,7 +36,10 @@
     "format",
     "align",
     "cjk",
-    "emoji"
+    "emoji",
+    "paste",
+    "excel",
+    "spreadsheet"
   ],
   "main": "./src/extension.js",
   "activationEvents": [
@@ -90,6 +93,11 @@
           "type": "boolean",
           "default": false,
           "description": "Format every Markdown table in a file when it is saved."
+        },
+        "pipegridLite.pasteSpreadsheetAsTable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ctrl+V of cells copied from a spreadsheet (tab-separated rows) inserts a Markdown table; the paste options widget switches back to plain text. Not inside fenced code blocks. VS Code 1.97 or newer."
         }
       }
     }
