@@ -32,3 +32,8 @@ test('no network calls in the extension', () => {
     assert.match(code, /MIT licence/);
   }
 });
+
+test('the .vsix leaves out the repository-only files', () => {
+  const ignored = fs.readFileSync(path.join(root, '.vscodeignore'), 'utf8').split('\n');
+  for (const p of ['test/**', 'tools/**', 'listing/**', 'dist/**', '.github/**']) assert.ok(ignored.includes(p), p);
+});

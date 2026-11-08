@@ -106,5 +106,8 @@
     "test": "node --test test/*.test.js",
     "package": "node tools/package.js",
     "images": "node tools/render.mjs tools/images.mjs"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "4.1.0"
   }
 }
