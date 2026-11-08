@@ -1,0 +1,40 @@
+name: CI
+
+# Every push to main and every pull request: the table engine and extension
+# tests, the .vsix packaged by @vscode/vsce (the Marketplace's own packager,
+# which refuses a manifest or README the store would reject) and the audit of
+# the development tools.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Actions are pinned to commit hashes, so a moved tag cannot change what runs here.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      # The extension has no runtime dependencies; vsce is the only tool here.
+      # minimatch (through vsce) has a moderate advisory whose only fix is
+      # minimatch 11, outside the range vsce 4 accepts, so the gate is high
+      # and above until vsce moves. Dependabot proposes the update as soon as
+      # one exists.
+      - name: npm audit
+        run: npm audit --audit-level=high
+      - name: Tests
+        run: npm test
+      - name: Package the .vsix
+        run: npm run package
